@@ -4,7 +4,7 @@
 This Module contains a definition for class
 """
 
-from base_model import BaseModel
+from models.base_model import BaseModel
 
 
 class Amenity(BaseModel):

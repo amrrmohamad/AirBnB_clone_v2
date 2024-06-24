@@ -8,3 +8,7 @@ This is the initial stage to developing a full scale clone of AirBnB Website. Th
 ### Stage 2
 
 The second stage: Developing static pages to be used for airbnb website
+
+### stage 3
+
+make our database from sqlAlchem

@@ -4,12 +4,20 @@
 This Module contains a definition for FileStorage Class
 os , importlib , re and json
 """
-
 import os
-import importlib
 import re
 import json
+import importlib
+from models.city import City
+from models.user import User
+from models.place import Place
+from models.state import State
+from models.review import Review
+from models.amenity import Amenity
+from models.base_model import BaseModel
 
+classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
+           "Place": Place, "Review": Review, "State": State, "User": User}
 
 class FileStorage:
     """FileStorage Class.
@@ -25,8 +33,14 @@ class FileStorage:
         """Set in __objects obj with key <obj_class_name>.id"""
         self.__objects[f"{obj.__class__.__name__}.{obj.id}"] = obj
 
-    def all(self):
+    def all(self, cls = None):
         """returns the dictionary __objects"""
+        if cls is not None:
+            new_dictionary = {}
+            for key, value in self.__objects.items():
+                if cls == value.__class__.__name__ or  cls == value.__class__:
+                    new_dictionary[key] = value
+            return new_dictionary
         return self.__objects
 
     def save(self):
@@ -42,10 +56,14 @@ class FileStorage:
 
     def reload(self):
         """Deserialize the JSON file __file_path to __objects, if it exists."""
-        if (os.path.isfile(self.__file_path)):
-            if (os.path.getsize(self.__file_path) > 0):
-                with open(self.__file_path, "r") as f:
-                    self.__objects = {
-                      k: self.get_class(k.split(".")[0])(**a)
-                      for k, a in json.load(f).items()
-                    }
+        try:
+            with open(self.__file_path, 'r') as f:
+                jo = json.load(f)
+            for key in jo:
+                self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
+        except:
+            pass
+
+    def close(self):
+        """call reload() method"""
+        self.reload()
